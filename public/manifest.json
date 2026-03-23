@@ -1,0 +1,22 @@
+{
+  "name": "FIRE Tracker",
+  "short_name": "FIRE Tracker",
+  "description": "以财富自由早日退休为目标驱动的个人/家庭资产管理应用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
