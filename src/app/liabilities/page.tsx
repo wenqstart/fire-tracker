@@ -11,6 +11,7 @@ import {
   Edit2,
   Trash2,
   X,
+  Clock,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -38,6 +39,7 @@ export default function LiabilitiesPage() {
     amount: '',
     interestRate: '',
     monthlyPayment: '',
+    remainingMonths: '',
     note: '',
   })
 
@@ -51,6 +53,7 @@ export default function LiabilitiesPage() {
       amount: parseFloat(formData.amount) || 0,
       interestRate: parseFloat(formData.interestRate) || undefined,
       monthlyPayment: parseFloat(formData.monthlyPayment) || undefined,
+      remainingMonths: formData.remainingMonths ? parseInt(formData.remainingMonths) : undefined,
       note: formData.note,
       createdAt: editingLiability?.createdAt || new Date(),
       updatedAt: new Date(),
@@ -68,6 +71,7 @@ export default function LiabilitiesPage() {
       amount: '',
       interestRate: '',
       monthlyPayment: '',
+      remainingMonths: '',
       note: '',
     })
     setShowAddModal(false)
@@ -82,6 +86,7 @@ export default function LiabilitiesPage() {
       amount: liability.amount.toString(),
       interestRate: liability.interestRate?.toString() || '',
       monthlyPayment: liability.monthlyPayment?.toString() || '',
+      remainingMonths: liability.remainingMonths?.toString() || '',
       note: liability.note || '',
     })
     setShowAddModal(true)
@@ -151,6 +156,12 @@ export default function LiabilitiesPage() {
                       {liability.interestRate && (
                         <p className="text-xs text-gray-400 mt-1">
                           利率: {liability.interestRate}%
+                        </p>
+                      )}
+                      {liability.remainingMonths && (
+                        <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          剩余 {liability.remainingMonths} 期
                         </p>
                       )}
                     </div>
@@ -225,6 +236,7 @@ export default function LiabilitiesPage() {
                       amount: '',
                       interestRate: '',
                       monthlyPayment: '',
+                      remainingMonths: '',
                       note: '',
                     })
                   }}
@@ -298,6 +310,18 @@ export default function LiabilitiesPage() {
                       placeholder="0.00"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">剩余期数</label>
+                  <Input
+                    type="number"
+                    value={formData.remainingMonths}
+                    onChange={(e) =>
+                      setFormData({ ...formData, remainingMonths: e.target.value })
+                    }
+                    placeholder="如: 240 (可选)"
+                  />
                 </div>
 
                 <div>

@@ -26,8 +26,7 @@ export interface Liability {
   amount: number
   interestRate?: number
   monthlyPayment?: number
-  startDate?: Date
-  endDate?: Date
+  remainingMonths?: number // 剩余期数
   note?: string
   createdAt: Date
   updatedAt: Date

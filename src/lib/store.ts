@@ -83,38 +83,55 @@ export const useStore = create<AppState>()(
       addAccount: (account) =>
         set((state) => {
           const accounts = [...state.accounts, account]
-          return { accounts }
+          const totalAssets = accounts.reduce((sum, a) => sum + a.balance, 0)
+          const netWorth = totalAssets - state.totalLiabilities
+          return { accounts, totalAssets, netWorth }
         }),
 
       updateAccount: (id, updates) =>
-        set((state) => ({
-          accounts: state.accounts.map((a) =>
+        set((state) => {
+          const accounts = state.accounts.map((a) =>
             a.id === id ? { ...a, ...updates, updatedAt: new Date() } : a
-          ),
-        })),
+          )
+          const totalAssets = accounts.reduce((sum, a) => sum + a.balance, 0)
+          const netWorth = totalAssets - state.totalLiabilities
+          return { accounts, totalAssets, netWorth }
+        }),
 
       deleteAccount: (id) =>
-        set((state) => ({
-          accounts: state.accounts.filter((a) => a.id !== id),
-        })),
+        set((state) => {
+          const accounts = state.accounts.filter((a) => a.id !== id)
+          const totalAssets = accounts.reduce((sum, a) => sum + a.balance, 0)
+          const netWorth = totalAssets - state.totalLiabilities
+          return { accounts, totalAssets, netWorth }
+        }),
 
       // 负债操作
       addLiability: (liability) =>
-        set((state) => ({
-          liabilities: [...state.liabilities, liability],
-        })),
+        set((state) => {
+          const liabilities = [...state.liabilities, liability]
+          const totalLiabilities = liabilities.reduce((sum, l) => sum + l.amount, 0)
+          const netWorth = state.totalAssets - totalLiabilities
+          return { liabilities, totalLiabilities, netWorth }
+        }),
 
       updateLiability: (id, updates) =>
-        set((state) => ({
-          liabilities: state.liabilities.map((l) =>
+        set((state) => {
+          const liabilities = state.liabilities.map((l) =>
             l.id === id ? { ...l, ...updates, updatedAt: new Date() } : l
-          ),
-        })),
+          )
+          const totalLiabilities = liabilities.reduce((sum, l) => sum + l.amount, 0)
+          const netWorth = state.totalAssets - totalLiabilities
+          return { liabilities, totalLiabilities, netWorth }
+        }),
 
       deleteLiability: (id) =>
-        set((state) => ({
-          liabilities: state.liabilities.filter((l) => l.id !== id),
-        })),
+        set((state) => {
+          const liabilities = state.liabilities.filter((l) => l.id !== id)
+          const totalLiabilities = liabilities.reduce((sum, l) => sum + l.amount, 0)
+          const netWorth = state.totalAssets - totalLiabilities
+          return { liabilities, totalLiabilities, netWorth }
+        }),
 
       // 交易操作
       addTransaction: (transaction) =>
@@ -194,13 +211,14 @@ export const useStore = create<AppState>()(
         })),
 
       // 重新计算总额
-      recalculateTotals: () =>
+      recalculateTotals: () => {
         set((state) => {
           const totalAssets = state.accounts.reduce((sum, a) => sum + a.balance, 0)
           const totalLiabilities = state.liabilities.reduce((sum, l) => sum + l.amount, 0)
           const netWorth = totalAssets - totalLiabilities
           return { totalAssets, totalLiabilities, netWorth }
-        }),
+        })
+      },
     }),
     {
       name: 'fire-tracker-storage',
@@ -211,12 +229,9 @@ export const useStore = create<AppState>()(
         fireGoals: state.fireGoals,
         budgets: state.budgets,
         settings: state.settings,
+        totalAssets: state.totalAssets,
+        totalLiabilities: state.totalLiabilities,
       }),
     }
   )
 )
-
-// 初始化时重新计算总额
-if (typeof window !== 'undefined') {
-  useStore.getState().recalculateTotals()
-}
